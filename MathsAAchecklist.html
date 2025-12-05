@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IB Maths AA HL Checklist</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0a0a0f;
+            --card: #12121a;
+            --card-hover: #1a1a24;
+            --border: #1e1e2e;
+            --text: #e4e4e7;
+            --text-dim: #71717a;
+            --accent: #6366f1;
+            --accent-dim: #4f46e5;
+            --green: #22c55e;
+            --orange: #f97316;
+        }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header { text-align: center; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        h1 { font-size: 1.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+        .subtitle { color: var(--text-dim); font-size: 0.9rem; }
+        .progress-container { margin-top: 1rem; }
+        .progress-bar { background: var(--border); height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-fill { background: linear-gradient(90deg, var(--accent), var(--green)); height: 100%; width: 0%; transition: width 0.3s ease; }
+        .stats { display: flex; justify-content: center; gap: 2rem; margin-top: 0.75rem; font-size: 0.85rem; color: var(--text-dim); }
+        .stats span { color: var(--text); font-weight: 600; }
+        .nav-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; justify-content: center; }
+        .nav-tab { padding: 0.5rem 1rem; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .nav-tab:hover { border-color: var(--accent); color: var(--text); }
+        .nav-tab.active { background: var(--accent); border-color: var(--accent); color: white; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background: var(--card); border: 1px solid var(--border); border-radius: 8px; min-width: 220px; z-index: 1000; margin-top: 0.25rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+        .dropdown-menu a { display: block; padding: 0.6rem 1rem; color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: all 0.2s; cursor: pointer; }
+        .dropdown-menu a:hover { background: var(--card-hover); color: var(--text); }
+        .dropdown-menu a:first-child { border-radius: 8px 8px 0 0; }
+        .dropdown-menu a:last-child { border-radius: 0 0 8px 8px; }
+        .dropdown.open .dropdown-menu { display: block; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .topic { background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 0.75rem; overflow: hidden; }
+        .topic-header { padding: 1rem 1.25rem; display: flex; justify-content: space-between; align-items: center; transition: background 0.2s; }
+        .topic-header:hover { background: var(--card-hover); }
+        .topic-left { display: flex; align-items: center; gap: 0.75rem; }
+        .topic-check { width: 24px; height: 24px; min-width: 24px; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; }
+        .topic-check:hover { border-color: var(--accent); }
+        .topic-check svg { width: 14px; height: 14px; stroke-width: 3; opacity: 0; color: white; }
+        .topic-check.checked { background: var(--green); border-color: var(--green); }
+        .topic-check.checked svg { opacity: 1; }
+        .topic-badge { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: white; }
+        .topic-badge.t1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .topic-badge.t2 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .topic-badge.t3 { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+        .topic-badge.t4 { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .topic-badge.t5 { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .topic-info { cursor: pointer; }
+        .topic h2 { font-size: 1.05rem; font-weight: 600; }
+        .topic-subtitle { font-size: 0.8rem; color: var(--text-dim); margin-top: 0.15rem; }
+        .topic-right { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
+        .topic-progress { width: 60px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+        .topic-progress-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; }
+        .topic-toggle { background: none; border: none; color: var(--text-dim); font-size: 1.1rem; transition: transform 0.3s; width: 24px; }
+        .topic.open .topic-toggle { transform: rotate(180deg); }
+        .topic-body { display: none; padding: 0 1.25rem 1rem; }
+        .topic.open .topic-body { display: block; }
+        .item { display: flex; gap: 0.6rem; padding: 0.6rem 0.5rem; cursor: pointer; border-radius: 6px; transition: background 0.15s; border-bottom: 1px solid var(--border); }
+        .item:last-child { border-bottom: none; }
+        .item:hover { background: rgba(255,255,255,0.03); }
+        .item.checked .checkbox { background: var(--green); border-color: var(--green); }
+        .item.checked .checkbox svg { opacity: 1; }
+        .item.checked .item-text { text-decoration: line-through; color: var(--text-dim); }
+        .checkbox { width: 18px; height: 18px; min-width: 18px; border: 2px solid var(--border); border-radius: 4px; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.15s; }
+        .checkbox svg { width: 10px; height: 10px; stroke-width: 3; opacity: 0; color: white; }
+        .item-content { flex: 1; }
+        .item-id { font-weight: 600; color: var(--accent); font-size: 0.8rem; display: inline; margin-right: 0.4rem; }
+        .item-text { font-size: 0.85rem; display: inline; }
+        .coming-soon-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .coming-soon-icon { font-size: 3rem; margin-bottom: 0.5rem; }
+        .coming-soon-card h3 { font-size: 1.25rem; font-weight: 600; color: var(--text); margin: 0; }
+        .coming-soon-card p { font-size: 0.9rem; color: var(--text-dim); margin: 0; max-width: 300px; }
+        .coming-soon-badge { display: inline-block; margin-top: 0.5rem; padding: 0.35rem 1rem; background: linear-gradient(135deg, var(--accent), var(--accent-dim)); color: white; font-size: 0.75rem; font-weight: 600; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .resource-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+        .resource-section h3 { margin-bottom: 1rem; font-size: 1.1rem; color: var(--text); }
+        .resource-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .resource-card { display: flex; flex-direction: column; align-items: center; padding: 1.25rem; background: var(--card-hover); border: 1px solid var(--border); border-radius: 10px; text-decoration: none; transition: all 0.2s; text-align: center; }
+        .resource-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .resource-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+        .resource-title { font-weight: 600; color: var(--text); margin-bottom: 0.25rem; font-size: 0.9rem; }
+        .resource-desc { font-size: 0.75rem; color: var(--text-dim); }
+        .databook-container { display: flex; justify-content: center; }
+        .databook-card { display: flex; flex-direction: column; align-items: center; padding: 2rem 3rem; background: var(--card-hover); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: all 0.2s; text-align: center; max-width: 350px; }
+        .databook-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(99, 102, 241, 0.15); }
+        .databook-icon { font-size: 3rem; margin-bottom: 0.75rem; }
+        .databook-title { font-weight: 600; color: var(--text); margin-bottom: 0.35rem; font-size: 1.1rem; }
+        .databook-desc { font-size: 0.85rem; color: var(--text-dim); }
+        .notes-container { display: flex; flex-direction: column; gap: 1.5rem; }
+        .notes-hero { background: linear-gradient(135deg, var(--accent), var(--accent-dim)); border-radius: 16px; padding: 2rem; text-align: center; text-decoration: none; transition: all 0.2s; display: block; }
+        .notes-hero:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(99, 102, 241, 0.35); }
+        .notes-hero h3 { font-size: 1.5rem; font-weight: 700; color: white; margin: 0 0 0.5rem 0; }
+        .notes-hero p { color: rgba(255,255,255,0.85); font-size: 0.9rem; margin: 0; }
+        .notes-external { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+        .notes-external-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-decoration: none; transition: all 0.2s; text-align: center; }
+        .notes-external-card:hover { border-color: var(--accent); transform: translateY(-2px); background: var(--card-hover); }
+        .notes-external-card h4 { font-size: 0.95rem; font-weight: 600; color: var(--text); margin: 0; }
+        .notes-topics-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.75rem; }
+        .notes-topic-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1rem; text-decoration: none; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; }
+        .notes-topic-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .notes-topic-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; color: white; }
+        .notes-topic-badge.t1 { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .notes-topic-badge.t2 { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .notes-topic-badge.t3 { background: linear-gradient(135deg, #a855f7, #7c3aed); }
+        .notes-topic-badge.t4 { background: linear-gradient(135deg, #f97316, #ea580c); }
+        .notes-topic-badge.t5 { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .notes-topic-name { font-size: 0.75rem; color: var(--text-dim); text-align: center; line-height: 1.3; }
+        @media (max-width: 768px) { .notes-external { grid-template-columns: 1fr; } .notes-topics-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 500px) { .notes-topics-grid { grid-template-columns: repeat(2, 1fr); } }
+        .practice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+        .practice-card { display: flex; flex-direction: column; align-items: center; padding: 1.5rem; background: var(--card); border: 1px solid var(--border); border-radius: 12px; text-decoration: none; transition: all 0.2s; text-align: center; }
+        .practice-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .practice-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .practice-title { font-weight: 600; color: var(--text); margin-bottom: 0.35rem; font-size: 1rem; }
+        .practice-desc { font-size: 0.8rem; color: var(--text-dim); }
+        @media (max-width: 500px) { .practice-grid { grid-template-columns: 1fr; } }
+        .syllabus-buttons { display: flex; gap: 0.75rem; justify-content: center; margin-top: 1.5rem; flex-wrap: wrap; }
+        .syllabus-buttons button { padding: 0.6rem 1.25rem; border-radius: 8px; border: 1px solid var(--border); background: var(--card); color: var(--text-dim); font-size: 0.85rem; cursor: pointer; transition: all 0.2s; }
+        .syllabus-buttons button:hover { border-color: var(--accent); color: var(--text); }
+        .section-counter { text-align: center; padding: 0.5rem; margin-bottom: 1rem; font-size: 0.85rem; color: var(--text-dim); }
+        .section-counter span { color: var(--text); font-weight: 600; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IB Maths AA HL Checklist</h1>
+        <p class="subtitle">Complete exam preparation tracker</p>
+        <div class="progress-container">
+            <div class="progress-bar"><div class="progress-fill" id="mainProg"></div></div>
+            <div class="stats"><span id="done">0</span> / <span id="total">0</span> completed &nbsp; <span id="pct">0%</span></div>
+        </div>
+    </header>
+    <nav class="nav-tabs">
+        <button class="nav-tab active" onclick="showSection('syllabus', this)">Syllabus</button>
+        <button class="nav-tab" onclick="showSection('databook', this)">Data Book</button>
+        <button class="nav-tab" onclick="showSection('books', this)">Books</button>
+        <button class="nav-tab" onclick="showSection('notes', this)">Notes</button>
+        <button class="nav-tab" onclick="showSection('practice', this)">Practice</button>
+        <div class="dropdown">
+            <button class="nav-tab dropdown-toggle" onclick="toggleDropdown(this)">Additional Resources ▼</button>
+            <div class="dropdown-menu">
+                <a onclick="showAdditionalSection('priorknowledge'); closeDropdown();">Prior Knowledge</a>
+                <a onclick="showAdditionalSection('keydefinitions'); closeDropdown();">Key Definitions</a>
+            </div>
+        </div>
+    </nav>
+    <main>
+        <section id="syllabus" class="section active">
+            <div class="section-counter">Syllabus: <span id="syllabusDone">0</span> / <span id="syllabusTotal">0</span> completed</div>
+            <div class="topic" data-topic="1">
+                <div class="topic-header">
+                    <div class="topic-left">
+                        <div class="topic-check" onclick="event.stopPropagation(); toggleTopicCheck(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="topic-badge t1">1</div>
+                        <div class="topic-info" onclick="toggleTopic(this)">
+                            <h2>Topic 1: Number and Algebra</h2>
+                            <div class="topic-subtitle">Standard form • sequences & series • proof • complex numbers • induction</div>
+                        </div>
+                    </div>
+                    <div class="topic-right" onclick="toggleTopic(this)">
+                        <div class="topic-progress"><div class="topic-progress-fill"></div></div>
+                        <span class="topic-toggle">▼</span>
+                    </div>
+                </div>
+                <div class="topic-body">
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.1</span><span class="item-text">Standard form: Operate with numbers written as a×10^k</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.2</span><span class="item-text">Arithmetic sequences and series: Find terms and sums using d</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.3</span><span class="item-text">Geometric sequences and series: Find terms and sums using r</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.4</span><span class="item-text">Financial applications: Model compound interest and annual depreciation</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.5</span><span class="item-text">Integer exponents and basic logs: Use exponent laws, log₁₀ and ln</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.6</span><span class="item-text">Simple deductive proof: Structure clear LHS→RHS algebraic arguments</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.7</span><span class="item-text">Rational exponents and full logs: Apply log laws, solve exponentials</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.8</span><span class="item-text">Infinite geometric series: Sum convergent geometric progressions</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.9</span><span class="item-text">Binomial theorem (natural n): Expand (a+b)ⁿ using nCr and Pascal</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.10</span><span class="item-text">Counting and extended binomial: Use permutations, combinations, non-integer powers</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.11</span><span class="item-text">Partial fractions: Decompose rational expressions into simpler terms</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.12</span><span class="item-text">Complex numbers (Cartesian): Work with a+bi and Argand diagrams</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.13</span><span class="item-text">Polar and Euler forms: Express z as r cisθ and re^{iθ}</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.14</span><span class="item-text">Complex roots and De Moivre: Find powers and roots of complex numbers</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.15</span><span class="item-text">Induction and contradiction: Prove or refute general mathematical statements</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">1.16</span><span class="item-text">Linear systems: Solve up to three simultaneous linear equations</span></div></div>
+                </div>
+            </div>
+            <div class="topic" data-topic="2">
+                <div class="topic-header">
+                    <div class="topic-left">
+                        <div class="topic-check" onclick="event.stopPropagation(); toggleTopicCheck(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="topic-badge t2">2</div>
+                        <div class="topic-info" onclick="toggleTopic(this)">
+                            <h2>Topic 2: Functions</h2>
+                            <div class="topic-subtitle">Graphs • transformations • polynomials • exponentials & logs</div>
+                        </div>
+                    </div>
+                    <div class="topic-right" onclick="toggleTopic(this)">
+                        <div class="topic-progress"><div class="topic-progress-fill"></div></div>
+                        <span class="topic-toggle">▼</span>
+                    </div>
+                </div>
+                <div class="topic-body">
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.1</span><span class="item-text">Straight line equations: Use gradient and intercept forms of lines</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.2</span><span class="item-text">Function concept: Define domain, range and informal inverse idea</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.3</span><span class="item-text">Graphs of functions: Sketch y=f(x) from descriptions or contexts</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.4</span><span class="item-text">Graph features: Identify extrema, zeros, symmetry and asymptotes</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.5</span><span class="item-text">Composite and inverse functions: Form f∘g and find f⁻¹(x)</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.6</span><span class="item-text">Quadratic forms and graphs: Rewrite, locate vertex and intercepts</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.7</span><span class="item-text">Quadratic equations/inequalities: Solve using formula, discriminant and signs</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.8</span><span class="item-text">Reciprocal and simple rational graphs: Analyze shapes and asymptotes</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.9</span><span class="item-text">Exponential and logarithmic graphs: Sketch, compare and interpret inverse pairs</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.10</span><span class="item-text">Solving equations: Solve analytically and via graph intersections</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.11</span><span class="item-text">Graph transformations: Translate, reflect and stretch basic functions</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.12</span><span class="item-text">Polynomial functions: Use factor/remainder theorems and root relations</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.13</span><span class="item-text">Further rational functions: Study behavior, asymptotes and restrictions</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.14</span><span class="item-text">Even, odd and self-inverse: Classify symmetry and find restricted inverses</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.15</span><span class="item-text">Inequalities between functions: Solve g(x)≥f(x) algebraically and graphically</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">2.16</span><span class="item-text">Modulus and reciprocal transformations: Graph |f(x)|, f(|x|), 1/f(x), [f(x)]²</span></div></div>
+                </div>
+            </div>
+            <div class="topic" data-topic="3">
+                <div class="topic-header">
+                    <div class="topic-left">
+                        <div class="topic-check" onclick="event.stopPropagation(); toggleTopicCheck(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="topic-badge t3">3</div>
+                        <div class="topic-info" onclick="toggleTopic(this)">
+                            <h2>Topic 3: Geometry and Trigonometry</h2>
+                            <div class="topic-subtitle">3D geometry • trig identities • vectors • planes</div>
+                        </div>
+                    </div>
+                    <div class="topic-right" onclick="toggleTopic(this)">
+                        <div class="topic-progress"><div class="topic-progress-fill"></div></div>
+                        <span class="topic-toggle">▼</span>
+                    </div>
+                </div>
+                <div class="topic-body">
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.1</span><span class="item-text">3D distance and solids: Find distances, midpoints, volumes and areas</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.2</span><span class="item-text">Trig in triangles: Use sine, cosine, tangent, sine rule, cosine rule</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.3</span><span class="item-text">Trig applications: Solve height, distance and angle problems</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.4</span><span class="item-text">Radians, arcs and sectors: Relate angle, arc length and sector area</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.5</span><span class="item-text">Unit circle definitions: Define trig ratios and exact special values</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.6</span><span class="item-text">Trig identities: Use Pythagorean and double-angle relationships</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.7</span><span class="item-text">Circular function graphs: Transform sine, cosine and tangent curves</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.8</span><span class="item-text">Solving trig equations: Solve within intervals, including quadratic forms</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.9</span><span class="item-text">Reciprocal and inverse trig: Graph sec, cosec, cot, arcsin, arccos, arctan</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.10</span><span class="item-text">Compound angle identities: Apply sin(A±B), cos(A±B), tan(2A)</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.11</span><span class="item-text">Trig symmetry and relationships: Use periodicity and symmetry in graphs</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.12</span><span class="item-text">Vector basics: Represent vectors, components and displacement in 2D/3D</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.13</span><span class="item-text">Scalar product: Compute dot product, angles, perpendicularity and parallelism</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.14</span><span class="item-text">Vector equation of a line: Use r=a+λb, parametric and Cartesian forms</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.15</span><span class="item-text">Relationships between lines: Classify coincident, parallel, intersecting, skew</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.16</span><span class="item-text">Vector product: Compute v×w and interpret magnitude geometrically</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.17</span><span class="item-text">Equations of planes: Write vector, scalar and Cartesian plane equations</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">3.18</span><span class="item-text">Intersections and angles in 3D: Solve line–plane, plane–plane intersections</span></div></div>
+                </div>
+            </div>
+            <div class="topic" data-topic="4">
+                <div class="topic-header">
+                    <div class="topic-left">
+                        <div class="topic-check" onclick="event.stopPropagation(); toggleTopicCheck(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="topic-badge t4">4</div>
+                        <div class="topic-info" onclick="toggleTopic(this)">
+                            <h2>Topic 4: Statistics and Probability</h2>
+                            <div class="topic-subtitle">Data • distributions • regression • Bayes</div>
+                        </div>
+                    </div>
+                    <div class="topic-right" onclick="toggleTopic(this)">
+                        <div class="topic-progress"><div class="topic-progress-fill"></div></div>
+                        <span class="topic-toggle">▼</span>
+                    </div>
+                </div>
+                <div class="topic-body">
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.1</span><span class="item-text">Data and sampling concepts: Compare populations, samples, bias and outliers</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.2</span><span class="item-text">Presenting data: Construct histograms, cumulative curves and boxplots</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.3</span><span class="item-text">Central tendency and dispersion: Calculate mean, median, IQR, variance</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.4</span><span class="item-text">Correlation and regression (y on x): Interpret r and use regression line</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.5</span><span class="item-text">Basic probability concepts: Use sample spaces, events, complements, expectation</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.6</span><span class="item-text">Combined and conditional events: Use diagrams, independence, mutual exclusivity</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.7</span><span class="item-text">Discrete random variables: Define distributions and expected values</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.8</span><span class="item-text">Binomial distribution: Model fixed-trial success situations, mean, variance</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.9</span><span class="item-text">Normal distribution: Use normal curve and inverse normal calculations</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.10</span><span class="item-text">Regression of x on y: Find and interpret regression of x on y</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.11</span><span class="item-text">Conditional probability formulae: Apply definitions, test for independence</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.12</span><span class="item-text">Standardization with z-scores: Use z to find probabilities and parameters</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.13</span><span class="item-text">Bayes' theorem: Update probabilities for up to three events</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">4.14</span><span class="item-text">Variance and continuous variables: Work with PDFs, mean, variance, transformations</span></div></div>
+                </div>
+            </div>
+            <div class="topic" data-topic="5">
+                <div class="topic-header">
+                    <div class="topic-left">
+                        <div class="topic-check" onclick="event.stopPropagation(); toggleTopicCheck(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div>
+                        <div class="topic-badge t5">5</div>
+                        <div class="topic-info" onclick="toggleTopic(this)">
+                            <h2>Topic 5: Calculus</h2>
+                            <div class="topic-subtitle">Limits • differentiation • integration • DEs • series</div>
+                        </div>
+                    </div>
+                    <div class="topic-right" onclick="toggleTopic(this)">
+                        <div class="topic-progress"><div class="topic-progress-fill"></div></div>
+                        <span class="topic-toggle">▼</span>
+                    </div>
+                </div>
+                <div class="topic-body">
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.1</span><span class="item-text">Limits and derivative concept: View gradient as limiting rate of change</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.2</span><span class="item-text">Increasing/decreasing behaviour: Use sign of f′ to describe monotonicity</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.3</span><span class="item-text">Power rule basics: Differentiate polynomials of the form axⁿ</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.4</span><span class="item-text">Tangents and normals: Find equations using derivatives at points</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.5</span><span class="item-text">Basic integration as antiderivative: Find F(x) and simple areas under curves</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.6</span><span class="item-text">Differentiating standard functions: Use chain, product and quotient rules</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.7</span><span class="item-text">Second derivative and shape: Relate concavity and points of inflexion</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.8</span><span class="item-text">Extrema and inflection points: Optimize and classify stationary points</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.9</span><span class="item-text">Kinematics with calculus: Relate displacement, velocity and acceleration</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.10</span><span class="item-text">Integrating standard functions: Integrate using inspection and substitution</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.11</span><span class="item-text">Definite integrals and areas: Evaluate areas, including between curves</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.12</span><span class="item-text">Continuity and first principles: Understand limits, differentiability and base definition</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.13</span><span class="item-text">Advanced limits: Use l'Hôpital's rule and series for limits</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.14</span><span class="item-text">Implicit differentiation and rates: Solve related rates and optimization problems</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.15</span><span class="item-text">Advanced derivatives and integrals: Differentiate/integrate extended function families</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.16</span><span class="item-text">Integration techniques: Apply substitution and integration by parts repeatedly</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.17</span><span class="item-text">Areas and volumes of revolution: Find areas and solids of revolution</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.18</span><span class="item-text">First-order differential equations: Solve analytically and with Euler's method</span></div></div>
+                    <div class="item" onclick="toggleItem(this)"><div class="checkbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polyline points="20 6 9 17 4 12"/></svg></div><div class="item-content"><span class="item-id">5.19</span><span class="item-text">Maclaurin series: Expand standard functions and manipulate power series</span></div></div>
+                </div>
+            </div>
+            <div class="syllabus-buttons">
+                <button onclick="collapseAll()">Collapse All</button>
+                <button onclick="expandAll()">Expand All</button>
+                <button onclick="resetAll()">Reset Progress</button>
+                <button onclick="exportProgress()">Export</button>
+            </div>
+        </section>
+        <section id="databook" class="section">
+            <div class="resource-section">
+                <h3>📘 IB Maths AA HL Formula Booklet</h3>
+                <div class="databook-container">
+                    <a href="https://esrmnet.sharepoint.com/:b:/s/AnalysisandApproachesHL/IQDgAhU2ggjiQJwNppsLfKOLActnjwkwyMoZwcU56UAK5BM?e=M0Lyf5" target="_blank" class="databook-card">
+                        <span class="databook-icon">📄</span>
+                        <span class="databook-title">Formula Booklet</span>
+                        <span class="databook-desc">Official IB Maths AA formula booklet</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section id="books" class="section">
+            <div class="resource-section">
+                <h3>📚 Textbooks</h3>
+                <div class="resource-grid">
+                    <a href="https://esrmnet.sharepoint.com/:b:/s/AnalysisandApproachesHL/IQBmseGrlX7eTp4XPkhQGJKSASotS3EO5oxn-_U96K0wOsQ?e=B4h1en" target="_blank" class="resource-card">
+                        <span class="resource-icon">📘</span>
+                        <span class="resource-title">Haese Mathematics AA HL (Blue)</span>
+                        <span class="resource-desc">Core textbook for AA HL</span>
+                    </a>
+                    <a href="https://esrmnet.sharepoint.com/:b:/s/AnalysisandApproachesHL/IQBKh651b3yIQK--iXhojzCpAVX2HBXt4-vpFV4lVg_Qwiw?e=YCeNua" target="_blank" class="resource-card">
+                        <span class="resource-icon">📗</span>
+                        <span class="resource-title">Haese Mathematics AA HL (Green)</span>
+                        <span class="resource-desc">Practice exercises and exam-style questions</span>
+                    </a>
+                    <a href="https://esrmnet.sharepoint.com/:b:/s/AnalysisandApproachesHL/IQDfv32luwj-RLdTG73tD4s3AaNxMrsLfRjXCtKrzTt_WZA?e=Zh75Zd" target="_blank" class="resource-card">
+                        <span class="resource-icon">📕</span>
+                        <span class="resource-title">Pearson IB Mathematics AA HL</span>
+                        <span class="resource-desc">IB Maths AA HL course companion</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section id="notes" class="section">
+            <div class="notes-container">
+                <a href="https://www.revisionvillage.com/ib-math/analysis-and-approaches-hl/key-concepts/" target="_blank" class="notes-hero">
+                    <h3>🎬 Revision Village Videos</h3>
+                    <p>Topic-by-topic AA HL video explanations</p>
+                </a>
+                <div class="notes-external">
+                    <a href="https://rev-dojo-archive.pages.dev/ib/ib-math-aa" target="_blank" class="notes-external-card"><h4>Revision Dojo</h4></a>
+                    <a href="https://smearchive.pages.dev/dp/maths_aa-hl/ib/21/revision-notes/" target="_blank" class="notes-external-card"><h4>Save My Exams</h4></a>
+                    <a href="https://www.christosnikolaidis.com/en/maa-lecture-notes/" target="_blank" class="notes-external-card"><h4>Christos Nikolaidis</h4></a>
+                </div>
+                <div class="notes-topics-grid">
+                    <a href="https://dl.ibdocs.re/SaveMyExams%20-%20Notes/Maths%20AA%20HL/1.%20Number%20%26%20Algebra/" target="_blank" class="notes-topic-card">
+                        <div class="notes-topic-badge t1">1</div>
+                        <span class="notes-topic-name">Number & Algebra</span>
+                    </a>
+                    <a href="https://dl.ibdocs.re/SaveMyExams%20-%20Notes/Maths%20AA%20HL/2.%20Functions/" target="_blank" class="notes-topic-card">
+                        <div class="notes-topic-badge t2">2</div>
+                        <span class="notes-topic-name">Functions</span>
+                    </a>
+                    <a href="https://dl.ibdocs.re/SaveMyExams%20-%20Notes/Maths%20AA%20HL/3.%20Geometry%20%26%20Trigonometry/" target="_blank" class="notes-topic-card">
+                        <div class="notes-topic-badge t3">3</div>
+                        <span class="notes-topic-name">Geometry & Trig</span>
+                    </a>
+                    <a href="https://dl.ibdocs.re/SaveMyExams%20-%20Notes/Maths%20AA%20HL/4.%20Statistics%20%26%20Probability/" target="_blank" class="notes-topic-card">
+                        <div class="notes-topic-badge t4">4</div>
+                        <span class="notes-topic-name">Stats & Probability</span>
+                    </a>
+                    <a href="https://dl.ibdocs.re/SaveMyExams%20-%20Notes/Maths%20AA%20HL/5.%20Calculus/" target="_blank" class="notes-topic-card">
+                        <div class="notes-topic-badge t5">5</div>
+                        <span class="notes-topic-name">Calculus</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+        <section id="practice" class="section">
+            <div class="notes-external">
+
+                <a href="https://smearchive.pages.dev/dp/maths_aa-hl/ib/21/topic-questions/" target="_blank" class="practice-card">
+                    <span class="practice-icon">📄</span>
+                    <span class="practice-title">Save My Exams</span>
+                    <span class="practice-desc">Topic-by-topic practice and past papers</span>
+                </a>
+                <a href="https://revisiontown2024.pages.dev/#app/ib-math/analysis-and-approaches-hl/questionbank" target="_blank" class="practice-card">
+                    <span class="practice-icon">🏘️</span>
+                    <span class="practice-title">Revision Town</span>
+                    <span class="practice-desc">Additional AA HL practice questions</span>
+                </a>
+                <a href="https://www.christosnikolaidis.com/en/maa-exercise/" target="_blank" class="practice-card">
+                    <span class="practice-icon">📚</span>
+                    <span class="practice-title">Christos Nikolaidis</span>
+                    <span class="practice-desc">Worked examples and problem sets</span>
+                </a>
+            </div>
+        </section>
+        <section id="priorknowledge" class="section">
+            <div class="coming-soon-card">
+                <div class="coming-soon-icon">📖</div>
+                <h3>Prior Knowledge</h3>
+                <p>Pre-requisite concepts and skills for IB Maths AA HL</p>
+                <span class="coming-soon-badge">Coming Soon</span>
+            </div>
+        </section>
+        <section id="keydefinitions" class="section">
+            <div class="coming-soon-card">
+                <div class="coming-soon-icon">📝</div>
+                <h3>Key Definitions</h3>
+                <p>Essential definitions required for IB Maths exams</p>
+                <span class="coming-soon-badge">Coming Soon</span>
+            </div>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => { loadProgress(); updateAllCounts(); updateAllProgress(); updateTopicCheckboxes(); });
+        function showSection(id, btn) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); document.getElementById(id).classList.add('active'); if (btn && btn.classList && btn.classList.contains('nav-tab')) { btn.classList.add('active'); } }
+        function showAdditionalSection(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.querySelectorAll('.nav-tab').forEach(b => b.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelector('.dropdown .nav-tab').classList.add('active'); }
+        function toggleDropdown(btn) { btn.closest('.dropdown').classList.toggle('open'); }
+        function closeDropdown() { document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open')); }
+        document.addEventListener('click', function(e) { if (!e.target.closest('.dropdown')) { closeDropdown(); } });
+        function toggleTopic(el) { el.closest('.topic').classList.toggle('open'); }
+        function toggleTopicCheck(checkEl) { const topic = checkEl.closest('.topic'); const items = topic.querySelectorAll('.item'); const allChecked = Array.from(items).every(i => i.classList.contains('checked')); items.forEach(item => { if (allChecked) { item.classList.remove('checked'); } else { item.classList.add('checked'); } }); checkEl.classList.toggle('checked', !allChecked); saveProgress(); updateAllCounts(); updateAllProgress(); }
+        function updateTopicCheckboxes() { document.querySelectorAll('.topic').forEach(topic => { const items = topic.querySelectorAll('.item'); const checkedItems = topic.querySelectorAll('.item.checked'); const checkEl = topic.querySelector('.topic-check'); if (checkedItems.length === items.length && items.length > 0) { checkEl.classList.add('checked'); } else { checkEl.classList.remove('checked'); } }); }
+        function toggleItem(item) { item.classList.toggle('checked'); saveProgress(); updateTopicCheckboxes(); updateAllCounts(); updateAllProgress(); }
+        function updateAllCounts() { const syllabusItems = document.querySelectorAll('#syllabus .item'); const syllabusChecked = document.querySelectorAll('#syllabus .item.checked'); document.getElementById('syllabusTotal').textContent = syllabusItems.length; document.getElementById('syllabusDone').textContent = syllabusChecked.length; }
+        function updateAllProgress() { const allItems = document.querySelectorAll('#syllabus .item'); const allChecked = document.querySelectorAll('#syllabus .item.checked'); const total = allItems.length; const done = allChecked.length; const pct = total > 0 ? Math.round((done / total) * 100) : 0; document.getElementById('total').textContent = total; document.getElementById('done').textContent = done; document.getElementById('pct').textContent = pct + '%'; document.getElementById('mainProg').style.width = pct + '%'; document.querySelectorAll('.topic').forEach(topic => { const items = topic.querySelectorAll('.item'); const checked = topic.querySelectorAll('.item.checked'); const topicPct = items.length > 0 ? (checked.length / items.length) * 100 : 0; const fill = topic.querySelector('.topic-progress-fill'); if (fill) fill.style.width = topicPct + '%'; }); }
+        function saveProgress() { const checked = []; document.querySelectorAll('#syllabus .item.checked').forEach(item => { const id = item.querySelector('.item-id'); if (id) checked.push(id.textContent); }); localStorage.setItem('ibMathsAAHLChecklist', JSON.stringify(checked)); }
+        function loadProgress() { const saved = localStorage.getItem('ibMathsAAHLChecklist'); if (saved) { const checked = JSON.parse(saved); document.querySelectorAll('#syllabus .item').forEach(item => { const id = item.querySelector('.item-id'); if (id && checked.includes(id.textContent)) { item.classList.add('checked'); } }); } }
+        function collapseAll() { document.querySelectorAll('.topic').forEach(t => t.classList.remove('open')); }
+        function expandAll() { document.querySelectorAll('.topic').forEach(t => t.classList.add('open')); }
+        function resetAll() { if (confirm('Reset all progress? This cannot be undone.')) { document.querySelectorAll('#syllabus .item.checked').forEach(i => i.classList.remove('checked')); document.querySelectorAll('.topic-check.checked').forEach(c => c.classList.remove('checked')); localStorage.removeItem('ibMathsAAHLChecklist'); updateAllCounts(); updateAllProgress(); } }
+        function exportProgress() { const checked = []; document.querySelectorAll('#syllabus .item.checked').forEach(item => { const id = item.querySelector('.item-id')?.textContent || ''; const text = item.querySelector('.item-text')?.textContent || ''; checked.push(id + ' ' + text); }); const total = document.querySelectorAll('#syllabus .item').length; const pct = Math.round((checked.length / total) * 100); let txt = 'IB Maths AA HL Checklist Progress\n' + '='.repeat(50) + '\nDate: ' + new Date().toLocaleString() + '\nProgress: ' + checked.length + '/' + total + ' (' + pct + '%)\n\nCompleted Items:\n' + '-'.repeat(30) + '\n'; checked.forEach(c => txt += '✓ ' + c + '\n'); const blob = new Blob([txt], {type: 'text/plain'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'ib-maths-aa-hl-progress.txt'; a.click(); URL.revokeObjectURL(url); }
+    </script>
+</body>
+</html>
